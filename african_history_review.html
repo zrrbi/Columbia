@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HIST 1760 — Midterm Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --card: #1e1e1e;
+    --border: #2e2e2e;
+    --gold: #c9a84c;
+    --gold-dim: #7a6230;
+    --text: #e8e0d0;
+    --text-dim: #888;
+    --red: #c0392b;
+    --green: #2ecc71;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    padding: 48px 40px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .header-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* NAV TABS */
+  nav {
+    display: flex;
+    gap: 0;
+    padding: 0 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .tab {
+    padding: 16px 28px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* MAIN */
+  main { padding: 40px; max-width: 1400px; margin: 0 auto; }
+
+  /* SECTION PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* GROUP FILTER */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+    align-items: center;
+  }
+  .filter-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .filter-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--text-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+  .filter-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+
+  /* KEYWORD GRID */
+  .keywords-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 20px;
+  }
+  .keyword-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .keyword-card:hover { border-color: var(--gold-dim); }
+  .kw-group-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .kw-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .kw-section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 4px;
+    margin-top: 12px;
+  }
+  .kw-section-label:first-of-type { margin-top: 0; }
+  .kw-text {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: #c8c0b0;
+  }
+  .kw-bullets { padding-left: 0; list-style: none; }
+  .kw-bullets li {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #c8c0b0;
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 3px;
+  }
+  .kw-bullets li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--gold-dim);
+    font-size: 11px;
+  }
+
+  /* FLASHCARD SECTION */
+  .flashcard-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .fc-counter {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    min-width: 80px;
+  }
+  .fc-progress {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    min-width: 100px;
+  }
+  .fc-progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+  .btn {
+    padding: 10px 22px;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn.primary { background: var(--gold); color: #0e0e0e; border-color: var(--gold); font-weight: 500; }
+  .btn.primary:hover { background: #d4a94f; }
+
+  /* FLASHCARD */
+  .fc-scene {
+    perspective: 1200px;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto 32px;
+    height: 340px;
+    cursor: pointer;
+  }
+  .fc-card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .fc-card.flipped { transform: rotateY(180deg); }
+  .fc-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+  }
+  .fc-front {
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+  .fc-back {
+    background: #1a1a14;
+    border: 1px solid var(--gold-dim);
+    transform: rotateY(180deg);
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: left;
+    overflow-y: auto;
+    padding: 32px 36px;
+  }
+  .fc-front-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+  }
+  .fc-front-term {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 4vw, 34px);
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1.2;
+  }
+  .fc-front-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 20px;
+  }
+  .fc-back-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--gold);
+    margin-bottom: 16px;
+    font-weight: 700;
+  }
+  .fc-back-row {
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #c8c0b0;
+  }
+  .fc-back-row strong {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* FLASHCARD NAV */
+  .fc-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .fc-result-btns {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .btn-know { border-color: var(--green); color: var(--green); }
+  .btn-know:hover { background: rgba(46,204,113,0.1); }
+  .btn-review { border-color: var(--red); color: #e74c3c; }
+  .btn-review:hover { background: rgba(192,57,43,0.1); }
+
+  /* SCORE */
+  .score-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
+  .score-item { display: flex; align-items: center; gap: 6px; }
+  .score-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-know { background: var(--green); }
+  .dot-review { background: var(--red); }
+  .dot-unseen { background: var(--border); }
+
+  /* FC FILTER */
+  .fc-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; align-items: center; }
+
+  @media (max-width: 600px) {
+    header { padding: 28px 20px 20px; }
+    nav { padding: 0 8px; overflow-x: auto; }
+    main { padding: 24px 16px; }
+    .tab { padding: 14px 16px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="header-title">African History — Midterm Review</div>
+    <div class="header-sub">HIST 1760 &nbsp;·&nbsp; Prof. Abosede George &nbsp;·&nbsp; 30 Keywords</div>
+  </div>
+</header>
+
+<nav>
+  <button class="tab active" onclick="switchTab('keywords')">Keywords</button>
+  <button class="tab" onclick="switchTab('flashcards')">Flashcards</button>
+</nav>
+
+<main>
+
+<!-- ======== KEYWORDS PANEL ======== -->
+<div class="panel active" id="panel-keywords">
+  <div class="filter-bar">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active" onclick="filterGroup('all', this)">All</button>
+    <button class="filter-btn" onclick="filterGroup('1', this)">Group 1</button>
+    <button class="filter-btn" onclick="filterGroup('2', this)">Group 2</button>
+    <button class="filter-btn" onclick="filterGroup('3', this)">Group 3</button>
+    <button class="filter-btn" onclick="filterGroup('4', this)">Group 4</button>
+    <button class="filter-btn" onclick="filterGroup('5', this)">Group 5</button>
+    <button class="filter-btn" onclick="filterGroup('6', this)">Group 6</button>
+    <button class="filter-btn" onclick="filterGroup('7', this)">Group 7</button>
+    <button class="filter-btn" onclick="filterGroup('8', this)">Group 8</button>
+    <button class="filter-btn" onclick="filterGroup('9', this)">Group 9</button>
+    <button class="filter-btn" onclick="filterGroup('10', this)">Group 10</button>
+  </div>
+  <div class="keywords-grid" id="keywords-grid"></div>
+</div>
+
+<!-- ======== FLASHCARDS PANEL ======== -->
+<div class="panel" id="panel-flashcards">
+  <div class="fc-filter">
+    <span class="filter-label">Deck:</span>
+    <button class="filter-btn active" onclick="fcFilter('all', this)">All 30</button>
+    <button class="filter-btn" onclick="fcFilter('review', this)">Needs Review</button>
+    <button class="filter-btn" onclick="fcFilter('unseen', this)">Unseen Only</button>
+  </div>
+  <div class="score-bar">
+    <div class="score-item"><div class="score-dot dot-know"></div><span id="score-know">0 know</span></div>
+    <div class="score-item"><div class="score-dot dot-review"></div><span id="score-review">0 review</span></div>
+    <div class="score-item"><div class="score-dot dot-unseen"></div><span id="score-unseen">30 unseen</span></div>
+  </div>
+  <div class="flashcard-controls">
+    <span class="fc-counter" id="fc-counter">1 / 30</span>
+    <div class="fc-progress"><div class="fc-progress-fill" id="fc-progress" style="width:0%"></div></div>
+    <button class="btn" onclick="shuffleDeck()">Shuffle</button>
+    <button class="btn primary" onclick="resetDeck()">Reset</button>
+  </div>
+
+  <div class="fc-scene" onclick="flipCard()">
+    <div class="fc-card" id="fc-card">
+      <div class="fc-face fc-front">
+        <div class="fc-front-label">Term</div>
+        <div class="fc-front-term" id="fc-term"></div>
+        <div class="fc-front-hint">click to reveal</div>
+      </div>
+      <div class="fc-face fc-back" id="fc-back-content">
+      </div>
+    </div>
+  </div>
+
+  <div class="fc-result-btns" id="fc-result-btns" style="display:none">
+    <button class="btn btn-know" onclick="markCard('know')">✓ Got it</button>
+    <button class="btn btn-review" onclick="markCard('review')">↺ Review again</button>
+  </div>
+
+  <div class="fc-nav">
+    <button class="btn" onclick="fcNav(-1)">← Prev</button>
+    <button class="btn" onclick="fcNav(1)">Next →</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+const KEYWORDS = [
+  {
+    group: '1', term: 'Sundiata',
+    who: 'Sundiata Keita — founder and first Mansa (king) of the Mali Empire',
+    what: 'Legendary warrior-king who united Mande peoples, defeated the Sosso kingdom, and established the Mali Empire. Central figure in the Epic of Sundiata (oral history).',
+    where: 'West Africa — Mali Empire, centered on the upper Niger River',
+    when: 'c. 1217–1255 CE',
+    significance: 'Founded the largest West African empire of its era. Expanded trans-Saharan trade connections, bringing economic dominance to Mali. The Epic of Sundiata is a foundational oral tradition illustrating African statecraft and history-keeping outside written records.'
+  },
+  {
+    group: '1', term: 'Songhay (Empire)',
+    who: 'Sunni Ali (r. 1462–1492) and Askia Muhammad (r. 1493–1538) — key rulers',
+    what: 'The largest and most powerful West African empire of the 15th–16th centuries, rising from the city of Gao after the decline of Mali. Controlled gold and salt trade routes; Askia Muhammad promoted Islam and made a pilgrimage to Mecca.',
+    where: 'West Africa — centered on Gao along the Niger River, spanning the Sahel',
+    when: '1464–1591 CE',
+    significance: 'Demonstrated the height of Sudanic empire building. Its control of trans-Saharan trade made it a global economic power. Fell to a Moroccan invasion in 1591, illustrating the vulnerability of African states to firearms-equipped external forces.'
+  },
+  {
+    group: '1', term: 'Trans-Saharan Trade',
+    who: 'West African kingdoms (Mali, Songhay), North African merchants, Arab traders, Berber caravaneers',
+    what: 'North-south commercial network across the Sahara linking Mediterranean North Africa with sub-Saharan West Africa. West Africa exported gold, enslaved people, kola nuts, and animal products; North Africa exported textiles, horses, glass, and Islam.',
+    where: 'Sahara Desert — connecting West African Sahel to Mediterranean coast',
+    when: 'c. 400–1700 CE; peak during medieval Sudanic empires',
+    significance: 'Drove the rise of West African empires (Ghana, Mali, Songhay). Facilitated the spread of Islam across West Africa. Sent nearly 5 million enslaved people northward (650–1600 CE). Introduction of camels (300–400 CE) was the key technological enabler.'
+  },
+  {
+    group: '2', term: 'Axum (Aksum)',
+    who: 'Aksumite rulers, notably King Ezana (converted to Christianity c. 340 CE) and King Kaleb',
+    what: 'One of the earliest and most powerful East African kingdoms. An agricultural and trading state that exported gold, ivory, and enslaved people via the Red Sea to Rome, Byzantium, the Middle East, and India. Adopted Christianity as state religion c. 340 CE.',
+    where: 'Horn of Africa — present-day northern Ethiopia and Eritrea',
+    when: '1st–9th century CE',
+    significance: 'Proto-foundation of the Ethiopian empire and Solomonic dynasty. Ethiopia\'s adoption of Eastern Orthodox Christianity made it a unique African Christian civilization independent of European control. Decline caused by Islamic expansion cutting off Byzantine trade, drought, and raids.'
+  },
+  {
+    group: '2', term: 'Zamana Masafent',
+    who: 'Regional warlords (Ras), Emperor Iyoas I, Mikael Sehul, Emperor Tewodros II',
+    what: '"Era of the Princes" — a period of political fragmentation in Ethiopia in which the Solomonic emperor became a figurehead while regional lords (Ras) competed for power. Emperors were repeatedly deposed and reinstated (e.g., Tekle Giyorgis I served six times).',
+    where: 'Ethiopia — centered in Gondar',
+    when: '1769–1855 CE',
+    significance: 'Represents a recurring pattern of centralization-fragmentation in African political history. Ended when Emperor Tewodros II forcibly reunified Ethiopia. Parallels political fragmentation seen in other African states during the same period.'
+  },
+  {
+    group: '2', term: 'Solomonic Lineage',
+    who: 'Ethiopian emperors claiming descent from King Solomon and the Queen of Sheba via their son Menelik I',
+    what: 'An ideological claim of divine-royal legitimacy, codified in the Kebra Nagast ("Glory of Kings"). Every Ethiopian emperor claimed Solomonic descent, making political authority inseparable from biblical bloodline. Title: Negusa Nagast ("King of Kings").',
+    where: 'Ethiopia — Horn of Africa',
+    when: '13th century CE revival onwards; claim traces to ancient Axum',
+    significance: 'Provided the ideological backbone of Ethiopian imperial rule for centuries. Justified resistance to colonization as defense of a divinely ordained Christian kingdom. Survived the Zamana Masafent and underpinned Menelik II\'s authority at the Battle of Adwa.'
+  },
+  {
+    group: '3', term: '"Islamic" Slavery Model',
+    who: 'Islamic states, merchants, and households across North Africa, the Middle East, and East Africa; enslaved peoples from sub-Saharan Africa, Central Asia, and Eastern Europe',
+    what: 'A slavery system connected to trans-Saharan and Indian Ocean trade networks. Used for domestic labor, military service (e.g., Mamluks), agriculture, and concubinage. Key distinction: not strictly hereditary or racialized — children of mixed unions could gain free status.',
+    where: 'Sahara, Red Sea, Indian Ocean, East Africa, Middle East, South Asia',
+    when: '7th century CE onwards; intensified during medieval Islamic expansion',
+    significance: 'Predated and differed fundamentally from Atlantic slavery. Its relative fluidity (non-hereditary status, social mobility) contrasts with Atlantic chattel slavery\'s rigid racial hierarchy. Connected Africa to global trade networks centuries before European contact.'
+  },
+  {
+    group: '3', term: 'Three Phases of the Atlantic Slave Trade',
+    who: 'Phase I: Portugal, Spain. Phase II: Britain, France, Netherlands. Phase III: abolitionist movements vs. illegal traders',
+    what: 'Phase I (15th–16th c.): Early Iberian trade; Portuguese establish coastal routes. Phase II (17th–18th c.): Massive expansion; plantation slavery in the Americas drives demand; West Central Africa becomes dominant source. Phase III (19th c.): Britain bans trade (1807); illegal trade continues.',
+    where: 'Atlantic basin — West and Central Africa to the Americas',
+    when: '15th–19th centuries',
+    significance: 'Caused massive demographic loss in Africa and shaped the African diaspora in the Americas. Funded early European capitalism. The shift from Phase II to III shows how abolitionism did not immediately end the trade, revealing its deep economic entrenchment.'
+  },
+  {
+    group: '3', term: 'Lateen Sail',
+    who: 'Portuguese navigators, particularly under Prince Henry the Navigator',
+    what: 'A triangular sail developed in the Mediterranean that allowed ships to sail against the wind by tacking (zig-zagging). Solved the problem of Atlantic wind patterns that pushed ships away from the West African coast.',
+    where: 'Mediterranean origin; applied along the West African coastline and Atlantic',
+    when: '15th century; key to Portuguese Atlantic expansion',
+    significance: 'A critical technological turning point enabling European maritime expansion along Africa\'s coast. Without it, sustained Portuguese contact with West and Central Africa — and the subsequent Atlantic slave trade — would not have been possible.'
+  },
+  {
+    group: '4', term: 'Gun-Slave Cycle',
+    who: 'European traders, African rulers and warlords, enslaved Africans',
+    what: 'A self-reinforcing feedback loop: Europeans traded firearms to African rulers, who used guns to raid neighboring peoples, capturing slaves to trade back to Europeans for more guns. Each cycle escalated violence and slave raiding.',
+    where: 'West and Central Africa, particularly coastal trading regions',
+    when: '16th–19th centuries, during the Atlantic slave trade',
+    significance: 'Caused massive population loss, political instability, and militarization across African societies. Strengthened some states while destroying others. Illustrates how African participation in the slave trade was partly coerced by the logic of the cycle itself.'
+  },
+  {
+    group: '4', term: 'Queen Njinga',
+    who: 'Queen Njinga Mbande — ruler of Ndongo and Matamba kingdoms',
+    what: 'A powerful African queen who used a combination of military resistance and strategic diplomacy to resist Portuguese colonization and the slave trade of her people. She formed alliances with neighboring groups and escaped slaves, and temporarily converted to Christianity as a political strategy.',
+    where: 'West Central Africa — present-day Angola',
+    when: '1620s–1660s CE (17th century; peak of trans-Atlantic trade)',
+    significance: 'Maintained independence of her kingdoms for decades despite Portuguese pressure and proximity to prime slave trade zones. A symbol of African resistance, female political leadership, and strategic flexibility. Demonstrates that African rulers actively contested colonialism.'
+  },
+  {
+    group: '4', term: 'Kongo Kingdom',
+    who: 'ManiKongo (ruler), notably King Alfonso I (Nzinga Mbemba, r. 1509–1542); Jaga mercenary groups',
+    what: 'A centralized monarchy in West Central Africa with c. ½ million people (mid-1600s), fertile agriculture, copper metallurgy, and east-west trade networks. Had early diplomatic and trade relations with Portugal; adopted Christianity. Became enmeshed in the Atlantic slave trade, triggering the gun-slave cycle and eventual fragmentation.',
+    where: 'West Central Africa — present-day Angola, DRC, Republic of Congo; capital Mbanza Kongo',
+    when: 'Founded c. 14th century; independent 1390–1862',
+    significance: 'Major early example of African-European political and religious interaction. Shows how the Atlantic slave trade weakened African kingdoms: human resource loss, military pressure from Jaga groups, and economic competition caused fragmentation. Alfonso I\'s letters to Portugal are early primary sources of African anti-slavery critique.'
+  },
+  {
+    group: '5', term: 'Algeria 1830–1879',
+    who: 'French colonial forces; pied-noir settlers (French peasants); indigenous Algerian (Arab and Berber) populations',
+    what: 'French conquest and settler colonization of Algeria, then an Ottoman province. France invaded in 1830, encouraged European settler occupation of confiscated land, imposed French civil law over Islamic and customary law, and created a racial hierarchy. Indigenous resistance lasted 49 years until French "pacification" in 1879.',
+    where: 'North Africa — Algeria (Ottoman province)',
+    when: '1830–1879 (pacification); 1830–1962 (full colonial period)',
+    significance: 'A major early case of settler colonialism in Africa. Demonstrates how European empires restructured land, law, and society to serve imperial interests. Created entrenched racial and economic inequalities. The long resistance (49 years) foreshadowed the Algerian War of Independence (1954–1962).'
+  },
+  {
+    group: '5', term: 'Anglo-Egyptian Condominium',
+    who: 'British imperial government; Egyptian government (nominal co-ruler); Sudanese population',
+    what: 'A nominally joint British-Egyptian administration of Sudan established after the Battle of Omdurman (1898). In practice, Britain held real power; administration centered in Khartoum. Policies included economic extraction, labor control, and the "Southern Policy" separating northern and southern Sudan.',
+    where: 'Sudan — Northeast Africa',
+    when: '1899–1956',
+    significance: 'Illustrates how European empires used legal fictions (nominal co-rule) to mask unilateral domination. Created deep structural inequalities between northern and southern Sudan that contributed to later civil wars. Set the stage for Sudanese nationalism and independence in 1956.'
+  },
+  {
+    group: '5', term: '1898 Battle of Omdurman',
+    who: 'British-Egyptian army (~25,000) under General Kitchener vs. Mahdist forces (~50,000)',
+    what: 'A decisive battle on September 2, 1898, near Omdurman, Sudan. British-Egyptian forces equipped with Maxim guns and modern artillery defeated the Mahdist army, ending the Mahdist State (1885–1898). Mahdist casualties: ~10,000+; Anglo-Egyptian losses: under 500.',
+    where: 'Omdurman, Sudan (near Khartoum)',
+    when: 'September 2, 1898',
+    significance: 'Ended African self-governance in Sudan and established the Anglo-Egyptian Condominium. Exemplifies Crowder\'s argument about technological imbalance in colonial conquest: Maxim guns vs. spears made open resistance futile. Secured British control of the Nile Valley. Resistance continued in Darfur — military victory did not mean total pacification.'
+  },
+  {
+    group: '6', term: 'Menelik II',
+    who: 'Menelik II (born Sahle Maryam) — Emperor of Ethiopia',
+    what: 'Emperor of Ethiopia (1889–1913) who modernized the state, established Addis Ababa as capital, expanded territory southward, and purchased modern arms from European powers. Led Ethiopia to its decisive victory against Italy at the Battle of Adwa (1896).',
+    where: 'Ethiopia — Horn of Africa; capital Addis Ababa',
+    when: '1889–1913',
+    significance: 'Preserved Ethiopian independence — the only African state to successfully defeat a European colonial power in direct military confrontation. His reign demonstrates that African rulers could use European technologies and diplomacy against colonialism. Ethiopia became an international symbol of African sovereignty.'
+  },
+  {
+    group: '6', term: 'Treaty of Wechale 1889',
+    who: 'Menelik II (Ethiopia) and Italian government',
+    what: 'A treaty between Ethiopia and Italy in 1889. The Italian version (Article 17) made Ethiopia a protectorate of Italy — requiring Ethiopia to conduct foreign relations through Italy. The Amharic version made this optional. Once Menelik II discovered the deception, he renounced the treaty in 1893, leading to Italian military invasion.',
+    where: 'Ethiopia / Tigray region',
+    when: '1889 (signed); 1893 (renounced by Menelik)',
+    significance: 'A key example of European deceptive treaty-making as a tool of colonization. Menelik\'s refusal to accept the Italian interpretation demonstrates African agency and the use of "strategic borrowing" — engaging European legal frameworks to resist them. Directly caused the Battle of Adwa.'
+  },
+  {
+    group: '6', term: 'Battle of Adwa 1896',
+    who: 'Ethiopian forces under Menelik II (~100,000) vs. Italian army',
+    what: 'On March 1, 1896, Ethiopian forces decisively defeated the Italian army at Adwa in northern Ethiopia. Ethiopia\'s advantages: knowledge of mountainous terrain, modern weapons purchased from France and Britain, and unified command under Menelik. Led to the Treaty of Addis Ababa, formally ending Italian claims.',
+    where: 'Adwa, northern Ethiopia (near Eritrea)',
+    when: 'March 1, 1896',
+    significance: 'The only decisive military defeat of a European colonial power by an African state during the Scramble for Africa. Ethiopia remained uncolonized throughout the colonial period. Became a global symbol of African resistance and Black independence — later inspiring Pan-African movements and the name "Addis Ababa" as a rallying point.'
+  },
+  {
+    group: '7', term: 'Sokoto Caliphate',
+    who: 'Usman dan Fodio (founder), Muhammad Bello (successor), Abdullahi (brother); Fulani and Hausa Muslim communities',
+    what: 'A large Islamic theocratic state established through jihad in the Hausa lands of West Africa. Dan Fodio\'s movement began as religious reform (critiquing unfair taxation and corrupt rulers), transitioned to armed conflict in 1804 (hijra and military phase), and created a confederate emirate system with a central caliph. Nana Asma\'u, dan Fodio\'s daughter, promoted women\'s education through poetry.',
+    where: 'Hausa lands of West Africa — present-day northern Nigeria and Niger; capital Sokoto',
+    when: '1804–1903 (when British colonial forces conquered it)',
+    significance: 'The largest and most centralized Islamic state in 19th-century West Africa. Its confederate emirate model provided a formidable counter to British and French colonial expansion. Demonstrates how religious reform movements could reshape political systems across the Sahel.'
+  },
+  {
+    group: '7', term: '19th-Century Yoruba Wars',
+    who: 'Yoruba city-states (Oyo, Ibadan, Ijebu, Ekiti, Egba, etc.); Sokoto Caliphate (Ilorin); British colonial forces',
+    what: 'A series of intra-Yoruba wars triggered by the collapse of the Oyo Empire in the early 19th century. The fall of Oyo (partly caused by the Sokoto jihad absorbing Ilorin) fragmented the Yoruba into competing factions. Decades of warfare generated large numbers of enslaved people and eventually created openings for British colonial intervention.',
+    where: 'Yorubaland — present-day southwestern Nigeria',
+    when: 'c. 1820s–1893',
+    significance: 'Illustrates how internal African political crises interacted with external colonial pressures. The wars produced enslaved people who ended up in the diaspora, including many who later returned (see: Reverse Diasporas). British mediation of the wars (1886, 1893) served as a pathway for colonial penetration into Yorubaland.'
+  },
+  {
+    group: '7', term: '1807 Ban',
+    who: 'British Parliament; Royal Navy West Africa Squadron; African coastal rulers and merchants; abolitionists',
+    what: 'Britain\'s 1807 Slave Trade Act, which banned British participation in the Atlantic slave trade. Britain deployed the West Africa Squadron to intercept illegal slave ships. The ban pushed trade toward "Legitimate Commerce" — palm oil, ivory, peanuts, cotton — reshaping West African economies. However, the trade continued illegally under other flags.',
+    where: 'Britain; West African coast; Atlantic Ocean',
+    when: '1807 (ban enacted); enforcement through mid-19th century',
+    significance: 'Marked a turning point in Atlantic trade — from enslaved people to commodity goods. Created new economic relationships between Britain and West Africa, ultimately facilitating colonial expansion. The ban\'s enforcement gave Britain justification for a naval presence along the African coast. Did not immediately stop the trade.'
+  },
+  {
+    group: '7', term: 'Reverse Diasporas',
+    who: 'Formerly enslaved Africans and their descendants — Sierra Leonean Krio, Black Americans (Americo-Liberians), Brazilian returnees (Agudás)',
+    what: 'The return migration of formerly enslaved Africans or their descendants back to the African continent. Key communities: Freetown (Sierra Leone) — liberated Africans resettled by Britain; Monrovia (Liberia) — founded by freed American slaves; Lagos (Nigeria) — Brazilian and Sierra Leonean returnees who became influential traders and missionaries.',
+    where: 'Freetown (Sierra Leone), Monrovia (Liberia), Lagos (Nigeria)',
+    when: 'Early 19th century onwards',
+    significance: 'Reverse diaspora communities became important intermediaries between European colonizers and African societies — as traders, missionaries, and interpreters. Samuel Ajayi Crowther is a key example. They brought Western education and Christianity but also complicated notions of African identity and belonging.'
+  },
+  {
+    group: '8', term: 'Berlin Conference',
+    who: '14 European powers and the United States; Ottoman Empire; King Leopold II of Belgium (key beneficiary). No African representatives.',
+    what: 'A diplomatic conference convened to regulate European competition over Africa and prevent war among colonial powers. Resolved the conflict between Portugal and Belgium over the Congo River basin. Declared spheres of influence, mandated free trade in the Congo basin, nominally banned the slave trade, and awarded the Congo to Leopold II personally.',
+    where: 'Berlin, Germany',
+    when: 'November 1884 – February 1885',
+    significance: 'Formalized the "Scramble for Africa" — the rapid European partition of the continent. Africa was divided without African participation or consent. Established the Congo Free State under Leopold II, which became notorious for extreme violence. Set the legal framework for colonization that enabled subsequent pacification campaigns.'
+  },
+  {
+    group: '8', term: 'General Ologbosere',
+    who: 'General Ologbosere — military commander of the Benin Kingdom, brother-in-law of the Oba',
+    what: 'Benin\'s military commander who organized the ambush of Lieutenant Phillips\'s British column in 1896 (killing 8 officers), triggering the British punitive expedition. After Benin\'s fall, he led a two-year guerrilla campaign against British forces — attacking outposts and sheltering in supportive villages — until his capture and execution in 1899.',
+    where: 'Benin Kingdom — present-day Nigeria',
+    when: '1896–1899',
+    significance: 'Exemplifies the pattern of African military resistance that continued after formal colonial conquest. His guerrilla tactics — terrain knowledge, community support — represent the broader challenge of "pacification." The British response (massacring supportive villages, destroying crops) reveals the extreme violence used to suppress resistance.'
+  },
+  {
+    group: '8', term: 'Pacification of Benin',
+    who: 'British forces (Colonel Ralph Moore, ~1,000 troops + Sierra Leonean soldiers) vs. Benin Kingdom (Oba, General Ologbosere)',
+    what: 'Britain\'s 1897 military campaign to subjugate the Benin Kingdom. After the Benin Massacre (1896, in which General Ologbosere\'s forces killed a British column), Britain launched a "punitive expedition." In February 1897, British forces burned Benin City, looted its famous bronze and ivory art, exiled the Oba, and incorporated Benin into British-controlled Nigeria.',
+    where: 'Benin Kingdom — forest belt of present-day Nigeria',
+    when: '1897 (punitive expedition); resistance until 1899',
+    significance: 'A defining example of colonial "pacification" — the coupling of peace rhetoric with extreme military violence. The looted Benin Bronzes (now scattered in Western museums) remain a major case in ongoing debates about colonial cultural theft and repatriation. Shows how one incident (the "massacre") provided the pretext for colonial conquest.'
+  },
+  {
+    group: '9', term: 'Civilizing Mission',
+    who: 'European missionaries (London Missionary Society, Church Missionary Society), abolitionists (Thomas Fowell Buxton), capitalists, and African intermediaries (e.g., Samuel Ajayi Crowther)',
+    what: 'A 19th-century European ideological framework claiming a moral duty to bring "civilization," Christianity, Western education, and "legitimate commerce" to Africa. Missionaries promoted religious conversion; capitalists promoted market participation and labor discipline; both worked synergistically to reshape African societies.',
+    where: 'Sub-Saharan Africa; key centers — Freetown (Sierra Leone), Lagos, Niger River mission stations',
+    when: 'Primarily 19th century; intensified after 1807 ban and especially after Berlin Conference (1884–85)',
+    significance: 'Provided the moral and intellectual justification for European imperialism. Masked resource extraction and colonial conquest behind humanitarian rhetoric. A key ideological foundation for the Scramble for Africa. Its legacy shapes Western perceptions of Africa and Africa\'s relationship to Christianity and Western education today.'
+  },
+  {
+    group: '9', term: 'Samuel Ajayi Crowther',
+    who: 'Yoruba scholar, linguist, missionary — the first African Anglican bishop',
+    what: 'Born c. 1809 in southwestern Nigeria (Yorubaland), enslaved as a child during a slave raid, rescued by the British Navy, and taken to Sierra Leone (Freetown). Educated by missionaries; converted to Christianity. Became a key West African missionary — translated the Bible into Yoruba and established missions along the Niger River. Consecrated bishop in 1864; died 1891.',
+    where: 'Born: southwestern Nigeria; educated: Sierra Leone (Freetown); missionary work: Niger River, West Africa',
+    when: 'c. 1809–1891',
+    significance: 'Crowther\'s life encapsulates the intersection of the slave trade, abolition, reverse diaspora, Civilizing Mission, and African agency. He challenged European racial superiority from within missionary institutions. An example of how Africans engaged with and shaped colonial ideological frameworks — a form of "strategic borrowing."'
+  },
+  {
+    group: '9', term: 'Company Rule',
+    who: 'Private concessionary (charter) companies backed by European governments — e.g., British South Africa Company (Cecil Rhodes), Royal African Company, Congo Free State (Leopold II)',
+    what: 'An early form of colonial administration in which private companies — rather than the colonial state directly — governed African territories. Companies obtained government charters granting them rights to tax, organize labor, issue currencies, and build infrastructure. Highly violent, relying on forced labor and coercive taxation.',
+    where: 'Across colonial Africa — southern Africa (Rhodesia), Congo, West Africa',
+    when: 'Late 19th to early 20th century; expanding after Berlin Conference (1884–85)',
+    significance: 'Laid the groundwork for High Colonialism (direct state administration). Profit motive belonged to shareholders, not the state — but both models shared the same fundamental goal: extracting African resources and labor for European benefit. Transition to state rule often happened because company violence became internationally embarrassing (e.g., Congo Free State).'
+  },
+  {
+    group: '10', term: 'Settler Colonialism',
+    who: 'Britain, France, Germany, Portugal, Belgium; European settlers; indigenous African populations',
+    what: 'A form of colonialism in which Europeans permanently settled African territories, seizing land from indigenous populations. Colonial costs (infrastructure, military, administration) were paid by colonized peoples through taxation and forced labor. Major economies: mining (copper), large-scale agriculture (coffee, tea, tobacco), and cash crop production.',
+    where: 'South Africa, Rhodesia (Zimbabwe/Zambia), Kenya, Algeria, Angola, Mozambique, Namibia, Belgian Congo',
+    when: 'Late 19th–20th century (focus on late 19th–early 20th century)',
+    significance: 'Structurally more violent than non-settler colonialism because it required permanent dispossession of land. Created long-term racial and economic inequalities that persisted after independence. Explains post-independence conflicts over land in Zimbabwe, South Africa, Kenya, and elsewhere.'
+  },
+  {
+    group: '10', term: 'Direct Rule / Indirect Rule',
+    who: 'Direct Rule: France, Portugal. Indirect Rule: Britain (sometimes Germany). African populations governed under both systems.',
+    what: 'Direct Rule: European officials governed colonies directly, imposing European legal systems and creating legal categories (Indigènes, Évolués, Originaires). Indirect Rule: Europeans governed through existing African chiefs/rulers, using them as intermediaries. Cheaper and less administratively heavy but made chiefs answerable to Europeans, not their own people.',
+    where: 'Direct Rule: Algeria, French West Africa, Portuguese colonies. Indirect Rule: British Nigeria, Gold Coast, elsewhere.',
+    when: 'Late 19th–20th century (Scramble for Africa onwards)',
+    significance: 'Two contrasting colonial governance models with different long-term consequences. Direct rule imposed European legal hierarchies that shaped post-colonial law. Indirect rule "froze" African political systems in place and created chiefs with compromised legitimacy — contributing to post-colonial governance challenges.'
+  },
+  {
+    group: '10', term: 'The Four Communes',
+    who: 'African originaires (inhabitants of the four towns); French colonial administration; Blaise Diagne (first African elected to French National Assembly, 1914)',
+    what: 'The four oldest French colonial towns in Senegal — Saint-Louis (1659), Gorée, Rufisque (1880), and Dakar (1887) — where African inhabitants (originaires) were granted French citizenship rights. Unlike other colonial subjects under the code de l\'indigénat, originaires could vote and send a representative to the French Parliament.',
+    where: 'Senegal — Saint-Louis, Gorée, Rufisque, Dakar',
+    when: 'Rights granted in waves: 1848, 1872, 1880, 1887; continued until Senegalese independence (1960)',
+    significance: 'A unique exception to French colonial policy. Demonstrates both the promise and limits of the French "Assimilation" model — citizenship was granted in theory but remained unequal in practice. Created an educated African political elite (originaires/évolués) who leveraged French law to resist colonial exploitation, influencing early African nationalism.'
+  }
+];
+
+// ---- KEYWORD DISPLAY ----
+function renderKeywords(group='all') {
+  const grid = document.getElementById('keywords-grid');
+  const filtered = group === 'all' ? KEYWORDS : KEYWORDS.filter(k => k.group === group);
+  grid.innerHTML = filtered.map(k => `
+    <div class="keyword-card" data-group="${k.group}">
+      <div class="kw-group-tag">Group ${k.group}</div>
+      <div class="kw-title">${k.term}</div>
+      <div class="kw-section-label">Who</div>
+      <div class="kw-text">${k.who}</div>
+      <div class="kw-section-label">What</div>
+      <div class="kw-text">${k.what}</div>
+      <div class="kw-section-label">Where</div>
+      <div class="kw-text">${k.where}</div>
+      <div class="kw-section-label">When</div>
+      <div class="kw-text">${k.when}</div>
+      <div class="kw-section-label">Significance</div>
+      <div class="kw-text">${k.significance}</div>
+    </div>
+  `).join('');
+}
+
+function filterGroup(group, btn) {
+  document.querySelectorAll('#panel-keywords .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderKeywords(group);
+}
+
+// ---- FLASHCARDS ----
+let deck = [...KEYWORDS];
+let deckIndices = deck.map((_, i) => i);
+let currentIdx = 0;
+let cardStates = {}; // index -> 'know' | 'review' | 'unseen'
+let isFlipped = false;
+let fcMode = 'all';
+
+KEYWORDS.forEach((_, i) => { cardStates[i] = 'unseen'; });
+
+function getActiveDeck() {
+  if (fcMode === 'all') return KEYWORDS.map((_, i) => i);
+  if (fcMode === 'review') return KEYWORDS.map((_, i) => i).filter(i => cardStates[i] === 'review');
+  if (fcMode === 'unseen') return KEYWORDS.map((_, i) => i).filter(i => cardStates[i] === 'unseen');
+  return KEYWORDS.map((_, i) => i);
+}
+
+function renderFC() {
+  const activeDeck = getActiveDeck();
+  if (activeDeck.length === 0) {
+    document.getElementById('fc-term').textContent = 'No cards in this deck!';
+    document.getElementById('fc-back-content').innerHTML = '<div class="fc-back-title">Empty Deck</div><div class="fc-back-row">Try switching to "All" or "Needs Review".</div>';
+    document.getElementById('fc-counter').textContent = '0 / 0';
+    document.getElementById('fc-result-btns').style.display = 'none';
+    return;
+  }
+  const realIdx = activeDeck[currentIdx % activeDeck.length];
+  const kw = KEYWORDS[realIdx];
+  document.getElementById('fc-term').textContent = kw.term;
+  const back = document.getElementById('fc-back-content');
+  back.innerHTML = `
+    <div class="fc-back-title">${kw.term}</div>
+    <div class="fc-back-row"><strong>Who</strong>${kw.who}</div>
+    <div class="fc-back-row"><strong>What</strong>${kw.what}</div>
+    <div class="fc-back-row"><strong>Where</strong>${kw.where}</div>
+    <div class="fc-back-row"><strong>When</strong>${kw.when}</div>
+    <div class="fc-back-row"><strong>Significance</strong>${kw.significance}</div>
+  `;
+  const total = activeDeck.length;
+  const pos = (currentIdx % total) + 1;
+  document.getElementById('fc-counter').textContent = `${pos} / ${total}`;
+  document.getElementById('fc-progress').style.width = `${(pos/total)*100}%`;
+  document.getElementById('fc-result-btns').style.display = 'none';
+  updateScore();
+}
+
+function flipCard() {
+  const card = document.getElementById('fc-card');
+  isFlipped = !isFlipped;
+  card.classList.toggle('flipped', isFlipped);
+  if (isFlipped) {
+    document.getElementById('fc-result-btns').style.display = 'flex';
+  }
+}
+
+function markCard(status) {
+  const activeDeck = getActiveDeck();
+  if (activeDeck.length === 0) return;
+  const realIdx = activeDeck[currentIdx % activeDeck.length];
+  cardStates[realIdx] = status;
+  updateScore();
+  fcNav(1);
+}
+
+function fcNav(dir) {
+  const activeDeck = getActiveDeck();
+  if (activeDeck.length === 0) return;
+  currentIdx = (currentIdx + dir + activeDeck.length) % activeDeck.length;
+  isFlipped = false;
+  document.getElementById('fc-card').classList.remove('flipped');
+  renderFC();
+}
+
+function shuffleDeck() {
+  // Fisher-Yates on indices via shuffling card states assignment
+  currentIdx = 0;
+  isFlipped = false;
+  document.getElementById('fc-card').classList.remove('flipped');
+  // Re-order KEYWORDS in place with a shuffle of display by randomizing currentIdx jumps
+  // Instead: randomize cardStates keys order by shuffling a mapping
+  const keys = Object.keys(cardStates);
+  for (let i = keys.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [keys[i], keys[j]] = [keys[j], keys[i]];
+  }
+  // Apply a visual shuffle by reordering deck
+  const originalDeck = KEYWORDS.map((_, i) => i);
+  const shuffled = [...originalDeck].sort(() => Math.random() - 0.5);
+  // Store shuffle order
+  window._shuffleOrder = shuffled;
+  renderFC();
+}
+
+function resetDeck() {
+  KEYWORDS.forEach((_, i) => { cardStates[i] = 'unseen'; });
+  currentIdx = 0;
+  isFlipped = false;
+  document.getElementById('fc-card').classList.remove('flipped');
+  renderFC();
+}
+
+function updateScore() {
+  const know = Object.values(cardStates).filter(s => s === 'know').length;
+  const review = Object.values(cardStates).filter(s => s === 'review').length;
+  const unseen = Object.values(cardStates).filter(s => s === 'unseen').length;
+  document.getElementById('score-know').textContent = `${know} know`;
+  document.getElementById('score-review').textContent = `${review} review`;
+  document.getElementById('score-unseen').textContent = `${unseen} unseen`;
+}
+
+function fcFilter(mode, btn) {
+  fcMode = mode;
+  document.querySelectorAll('.fc-filter .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentIdx = 0;
+  isFlipped = false;
+  document.getElementById('fc-card').classList.remove('flipped');
+  renderFC();
+}
+
+// ---- TAB SWITCHING ----
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById(`panel-${tab}`).classList.add('active');
+}
+
+// ---- INIT ----
+renderKeywords();
+renderFC();
+</script>
+</body>
+</html>
