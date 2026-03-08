@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HIST 1760 — Midterm Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e; --surface: #161616; --card: #1e1e1e; --border: #2e2e2e;
+    --gold: #c9a84c; --gold-dim: #7a6230; --text: #e8e0d0; --text-dim: #888;
+    --red: #c0392b; --green: #2ecc71; --cn-bg: #111a0e; --cn-border: #2a3a20; --cn-text: #a8c898; --cn-label: #5a8a3a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', sans-serif; min-height: 100vh; }
+  header { padding: 48px 40px 32px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .header-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 48px); font-weight: 900; color: var(--gold); line-height: 1; }
+  .header-sub { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 8px; }
+  nav { display: flex; padding: 0 40px; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .tab { padding: 16px 28px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; background: none; border-top: none; border-left: none; border-right: none; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+  main { padding: 40px; max-width: 1400px; margin: 0 auto; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; align-items: center; }
+  .filter-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-right: 4px; }
+  .filter-btn { padding: 6px 14px; border: 1px solid var(--border); background: none; color: var(--text-dim); font-family: 'IBM Plex Mono', monospace; font-size: 11px; cursor: pointer; border-radius: 2px; transition: all 0.15s; }
+  .filter-btn:hover { border-color: var(--gold-dim); color: var(--text); }
+  .filter-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+  .keywords-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+  .keyword-card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 24px; transition: border-color 0.2s; }
+  .keyword-card:hover { border-color: var(--gold-dim); }
+  .kw-group-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+  .kw-title { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--gold); margin-bottom: 16px; line-height: 1.2; }
+  .kw-section-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 4px; margin-top: 12px; }
+  .kw-text { font-size: 13.5px; line-height: 1.65; color: #c8c0b0; }
+  /* CN TOGGLE */
+  .cn-toggle { display: flex; align-items: center; gap: 8px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); cursor: pointer; user-select: none; }
+  .cn-toggle-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--cn-label); transition: color 0.15s; }
+  .cn-toggle:hover .cn-toggle-label { color: #7ab85a; }
+  .cn-arrow { font-size: 9px; color: var(--cn-label); transition: transform 0.2s; display: inline-block; }
+  .cn-arrow.open { transform: rotate(90deg); }
+  .cn-block { display: none; margin-top: 10px; background: var(--cn-bg); border: 1px solid var(--cn-border); border-radius: 3px; padding: 14px 16px; }
+  .cn-block.open { display: block; }
+  .cn-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--cn-label); margin-bottom: 3px; margin-top: 10px; }
+  .cn-label:first-of-type { margin-top: 0; }
+  .cn-text { font-size: 13px; line-height: 1.75; color: var(--cn-text); }
+  /* FLASHCARDS */
+  .flashcard-controls { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+  .fc-counter { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--text-dim); min-width: 80px; }
+  .fc-progress { flex: 1; height: 2px; background: var(--border); border-radius: 2px; min-width: 100px; }
+  .fc-progress-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.3s; }
+  .btn { padding: 10px 22px; border: 1px solid var(--border); background: none; color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 12px; cursor: pointer; border-radius: 2px; transition: all 0.15s; letter-spacing: 0.05em; }
+  .btn:hover { border-color: var(--gold); color: var(--gold); }
+  .btn.primary { background: var(--gold); color: #0e0e0e; border-color: var(--gold); font-weight: 500; }
+  .btn.primary:hover { background: #d4a94f; }
+  .fc-scene { perspective: 1200px; width: 100%; max-width: 720px; margin: 0 auto 32px; height: 380px; cursor: pointer; }
+  .fc-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.55s cubic-bezier(0.23,1,0.32,1); }
+  .fc-card.flipped { transform: rotateY(180deg); }
+  .fc-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 6px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; }
+  .fc-front { background: var(--card); border: 1px solid var(--border); }
+  .fc-back { background: #1a1a14; border: 1px solid var(--gold-dim); transform: rotateY(180deg); justify-content: flex-start; align-items: flex-start; text-align: left; overflow-y: auto; padding: 28px 32px; }
+  .fc-front-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 20px; }
+  .fc-front-term { font-family: 'Playfair Display', serif; font-size: clamp(22px,4vw,34px); font-weight: 700; color: var(--gold); line-height: 1.2; }
+  .fc-front-hint { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-dim); margin-top: 20px; }
+  .fc-back-title { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold); margin-bottom: 12px; font-weight: 700; }
+  .fc-back-row { margin-bottom: 7px; font-size: 12.5px; line-height: 1.55; color: #c8c0b0; }
+  .fc-back-row strong { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-dim); display: block; margin-bottom: 1px; }
+  .fc-divider { border: none; border-top: 1px solid var(--cn-border); margin: 10px 0; }
+  .fc-cn-row { margin-bottom: 6px; font-size: 12px; line-height: 1.6; color: var(--cn-text); }
+  .fc-cn-row strong { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.1em; color: var(--cn-label); display: block; margin-bottom: 1px; }
+  .fc-result-btns { display: flex; justify-content: center; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+  .btn-know { border-color: var(--green); color: var(--green); }
+  .btn-know:hover { background: rgba(46,204,113,0.1); }
+  .btn-review { border-color: var(--red); color: #e74c3c; }
+  .btn-review:hover { background: rgba(192,57,43,0.1); }
+  .score-bar { display: flex; gap: 12px; margin-bottom: 24px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; flex-wrap: wrap; }
+  .score-item { display: flex; align-items: center; gap: 6px; }
+  .score-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-know { background: var(--green); } .dot-review { background: var(--red); } .dot-unseen { background: var(--border); }
+  .fc-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; align-items: center; }
+  .fc-nav { display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; }
+  @media (max-width:600px) { header { padding: 28px 20px 20px; } nav { padding: 0 8px; overflow-x: auto; } main { padding: 24px 16px; } .tab { padding: 14px 16px; font-size: 11px; } }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="header-title">African History — Midterm Review</div>
+    <div class="header-sub">HIST 1760 &nbsp;·&nbsp; Prof. Abosede George &nbsp;·&nbsp; 30 Keywords</div>
+  </div>
+</header>
+<nav>
+  <button class="tab active" onclick="switchTab('keywords')">Keywords</button>
+  <button class="tab" onclick="switchTab('flashcards')">Flashcards</button>
+</nav>
+<main>
+  <div class="panel active" id="panel-keywords">
+    <div class="filter-bar">
+      <span class="filter-label">Filter:</span>
+      <button class="filter-btn active" onclick="filterGroup('all',this)">All</button>
+      <button class="filter-btn" onclick="filterGroup('1',this)">Group 1</button>
+      <button class="filter-btn" onclick="filterGroup('2',this)">Group 2</button>
+      <button class="filter-btn" onclick="filterGroup('3',this)">Group 3</button>
+      <button class="filter-btn" onclick="filterGroup('4',this)">Group 4</button>
+      <button class="filter-btn" onclick="filterGroup('5',this)">Group 5</button>
+      <button class="filter-btn" onclick="filterGroup('6',this)">Group 6</button>
+      <button class="filter-btn" onclick="filterGroup('7',this)">Group 7</button>
+      <button class="filter-btn" onclick="filterGroup('8',this)">Group 8</button>
+      <button class="filter-btn" onclick="filterGroup('9',this)">Group 9</button>
+      <button class="filter-btn" onclick="filterGroup('10',this)">Group 10</button>
+    </div>
+    <div class="keywords-grid" id="keywords-grid"></div>
+  </div>
+  <div class="panel" id="panel-flashcards">
+    <div class="fc-filter">
+      <span class="filter-label">Deck:</span>
+      <button class="filter-btn active" onclick="fcFilter('all',this)">All 30</button>
+      <button class="filter-btn" onclick="fcFilter('review',this)">Needs Review</button>
+      <button class="filter-btn" onclick="fcFilter('unseen',this)">Unseen Only</button>
+    </div>
+    <div class="score-bar">
+      <div class="score-item"><div class="score-dot dot-know"></div><span id="score-know">0 know</span></div>
+      <div class="score-item"><div class="score-dot dot-review"></div><span id="score-review">0 review</span></div>
+      <div class="score-item"><div class="score-dot dot-unseen"></div><span id="score-unseen">30 unseen</span></div>
+    </div>
+    <div class="flashcard-controls">
+      <span class="fc-counter" id="fc-counter">1 / 30</span>
+      <div class="fc-progress"><div class="fc-progress-fill" id="fc-progress" style="width:0%"></div></div>
+      <button class="btn" onclick="shuffleDeck()">Shuffle</button>
+      <button class="btn primary" onclick="resetDeck()">Reset</button>
+    </div>
+    <div class="fc-scene" onclick="flipCard()">
+      <div class="fc-card" id="fc-card">
+        <div class="fc-face fc-front">
+          <div class="fc-front-label">Term</div>
+          <div class="fc-front-term" id="fc-term"></div>
+          <div class="fc-front-hint">click to reveal</div>
+        </div>
+        <div class="fc-face fc-back" id="fc-back-content"></div>
+      </div>
+    </div>
+    <div class="fc-result-btns" id="fc-result-btns" style="display:none">
+      <button class="btn btn-know" onclick="markCard('know')">✓ Got it</button>
+      <button class="btn btn-review" onclick="markCard('review')">↺ Review again</button>
+    </div>
+    <div class="fc-nav">
+      <button class="btn" onclick="fcNav(-1)">← Prev</button>
+      <button class="btn" onclick="fcNav(1)">Next →</button>
+    </div>
+  </div>
+</main>
+<script>
+const KW = [
+  { g:'1', term:'Sundiata',
+    who:'Sundiata Keita — founder and first Mansa (king) of the Mali Empire',
+    what:'Legendary warrior-king who united Mande peoples, defeated the Sosso kingdom, and established the Mali Empire. Central figure in the Epic of Sundiata (oral history).',
+    where:'West Africa — Mali Empire, centered on the upper Niger River',
+    when:'c. 1217–1255 CE',
+    sig:'Founded the largest West African empire of its era. Expanded trans-Saharan trade. The Epic of Sundiata illustrates African statecraft and history-keeping outside written records.',
+    cwho:'松迪亚塔·凯塔——马里帝国的创始人兼首任曼萨（国王）',
+    cwhat:'传奇战士国王，统一曼德族群，击败索索王国，建立马里帝国。《松迪亚塔史诗》的核心人物。',
+    cwhere:'西非——马里帝国，以尼日尔河上游为中心',
+    cwhen:'约公元1217–1255年',
+    csig:'建立了那个时代西非最大的帝国，扩大了跨撒哈拉贸易联系。《松迪亚塔史诗》是非洲口述传统的重要代表，展示了文字记录之外的非洲国家治理与历史传承方式。'
+  },
+  { g:'1', term:'Songhay (Empire)',
+    who:'Sunni Ali (r. 1462–1492) and Askia Muhammad (r. 1493–1538) — key rulers',
+    what:'The largest West African empire of the 15th–16th centuries, rising from Gao after Mali\'s decline. Controlled gold and salt routes; Askia Muhammad promoted Islam and made a pilgrimage to Mecca.',
+    where:'West Africa — centered on Gao along the Niger River, spanning the Sahel',
+    when:'1464–1591 CE',
+    sig:'Height of Sudanic empire building. Fell to a Moroccan invasion (1591), illustrating African states\' vulnerability to firearms-equipped external forces.',
+    cwho:'桑尼·阿里（在位1462–1492年）和阿斯基亚·穆罕默德（在位1493–1538年）',
+    cwhat:'15至16世纪西非最强大的帝国，在马里帝国衰落后从加奥城崛起，控制黄金和盐的贸易路线。阿斯基亚·穆罕默德推广伊斯兰教并朝觐麦加。',
+    cwhere:'西非——以尼日尔河沿岸的加奥为中心，横跨萨赫勒地区',
+    cwhen:'公元1464–1591年',
+    csig:'代表了苏丹帝国建设的巅峰。1591年被摩洛哥入侵所灭，揭示了非洲国家面对配备火器的外部势力时的脆弱性。'
+  },
+  { g:'1', term:'Trans-Saharan Trade',
+    who:'West African kingdoms (Mali, Songhay), North African merchants, Arab traders, Berber caravaneers',
+    what:'North-south commercial network across the Sahara. West Africa exported gold, enslaved people, kola nuts; North Africa exported textiles, horses, glass, and Islam.',
+    where:'Sahara Desert — connecting West African Sahel to the Mediterranean coast',
+    when:'c. 400–1700 CE; peak during medieval Sudanic empires',
+    sig:'Drove the rise of West African empires. Facilitated the spread of Islam. Sent nearly 5 million enslaved people northward (650–1600 CE). Introduction of camels (300–400 CE) was the key technological enabler.',
+    cwho:'西非王国（马里、桑海）、北非商人、阿拉伯贸易商、柏柏尔商队',
+    cwhat:'穿越撒哈拉的南北商业网络。西非出口黄金、被奴役者、可乐果；北非出口纺织品、马匹、玻璃及伊斯兰教。',
+    cwhere:'撒哈拉沙漠——连接西非萨赫勒地区与地中海沿岸',
+    cwhen:'约公元400–1700年；中世纪苏丹帝国时期达到顶峰',
+    csig:'推动了西非帝国的兴起，促进了伊斯兰教在西非的传播。公元650–1600年间约有500万被奴役者被贩往北方。骆驼的引入（约公元300–400年）是关键技术推动因素。'
+  },
+  { g:'2', term:'Axum (Aksum)',
+    who:'Aksumite rulers, notably King Ezana (converted to Christianity c. 340 CE)',
+    what:'One of the earliest and most powerful East African kingdoms. Exported gold, ivory, and enslaved people via the Red Sea. Adopted Christianity as state religion c. 340 CE.',
+    where:'Horn of Africa — present-day northern Ethiopia and Eritrea',
+    when:'1st–9th century CE',
+    sig:'Proto-foundation of the Ethiopian empire and Solomonic dynasty. Ethiopia\'s Eastern Orthodox Christianity made it a unique African Christian civilization independent of European control.',
+    cwho:'阿克苏姆统治者，尤其是埃扎纳国王（约公元340年皈依基督教）',
+    cwhat:'东非最早也最强大的王国之一。通过红海出口黄金、象牙和被奴役者。约公元340年将基督教定为国教。',
+    cwhere:'非洲之角——今埃塞俄比亚北部和厄立特里亚',
+    cwhen:'公元1至9世纪',
+    csig:'埃塞俄比亚帝国与所罗门王朝的雏形。东正教基督教使其成为独立于欧洲控制之外的独特非洲基督教文明。'
+  },
+  { g:'2', term:'Zamana Masafent',
+    who:'Regional warlords (Ras), Emperor Iyoas I, Mikael Sehul, Emperor Tewodros II',
+    what:'"Era of the Princes" — political fragmentation in Ethiopia where the Solomonic emperor became a figurehead while regional lords competed for power. Emperors were repeatedly deposed and reinstated.',
+    where:'Ethiopia — centered in Gondar',
+    when:'1769–1855 CE',
+    sig:'Represents a recurring pattern of centralization-fragmentation in African political history. Ended when Emperor Tewodros II forcibly reunified Ethiopia.',
+    cwho:'地方军阀（拉斯）、伊约阿斯一世皇帝、米卡埃尔·赛胡尔、特沃德罗斯二世皇帝',
+    cwhat:'"王公时代"——埃塞俄比亚政治分裂时期，所罗门王朝皇帝沦为傀儡，地方领主争夺权力。皇帝屡遭废黜又反复复位。',
+    cwhere:'埃塞俄比亚——以贡德尔为中心',
+    cwhen:'公元1769–1855年',
+    csig:'体现了非洲政治史中中央集权与分裂割据反复交替的规律。特沃德罗斯二世皇帝强行统一埃塞俄比亚后这一时期告终。'
+  },
+  { g:'2', term:'Solomonic Lineage',
+    who:'Ethiopian emperors claiming descent from King Solomon and the Queen of Sheba via their son Menelik I',
+    what:'Ideological claim of divine-royal legitimacy, codified in the Kebra Nagast ("Glory of Kings"). Every emperor claimed Solomonic descent. Title: Negusa Nagast ("King of Kings").',
+    where:'Ethiopia — Horn of Africa',
+    when:'13th century CE revival onwards; claim traces to ancient Axum',
+    sig:'Provided the ideological backbone of Ethiopian imperial rule for centuries. Justified resistance to colonization as defense of a divinely ordained Christian kingdom. Underpinned Menelik II\'s authority at Adwa.',
+    cwho:'埃塞俄比亚历代皇帝，自称通过所罗门王与示巴女王之子孟尼利克一世传承血脉',
+    cwhat:'神圣王权合法性的意识形态主张，载于《荣耀之书》（Kebra Nagast）。每位皇帝均声称拥有所罗门血统。头衔：内古斯·内加斯特（"万王之王"）。',
+    cwhere:'埃塞俄比亚——非洲之角',
+    cwhen:'公元13世纪王朝复兴起；追溯至古代阿克苏姆',
+    csig:'数百年来为埃塞俄比亚帝国统治提供意识形态支柱。将抵抗殖民主义诠释为捍卫神圣基督教王国，为孟尼利克二世在阿杜瓦战役中的权威提供合法性基础。'
+  },
+  { g:'3', term:'"Islamic" Slavery Model',
+    who:'Islamic states, merchants, and households across North Africa, the Middle East, and East Africa',
+    what:'A slavery system connected to trans-Saharan and Indian Ocean trade networks. Used for domestic labor, military service (e.g., Mamluks), and agriculture. Key distinction: not strictly hereditary or racialized.',
+    where:'Sahara, Red Sea, Indian Ocean, East Africa, Middle East, South Asia',
+    when:'7th century CE onwards',
+    sig:'Predated and differed fundamentally from Atlantic slavery. Its relative fluidity contrasts with Atlantic chattel slavery\'s rigid racial hierarchy. Connected Africa to global trade networks centuries before European contact.',
+    cwho:'北非、中东和东非的伊斯兰国家、商人及家庭',
+    cwhat:'与跨撒哈拉和印度洋贸易网络相连的奴役制度。用于家务劳动、军事服务（如马穆鲁克）和农业。关键区别：并非严格意义上的世袭制，也没有明显的种族化特征。',
+    cwhere:'撒哈拉、红海、印度洋、东非、中东、南亚',
+    cwhen:'公元7世纪起',
+    csig:'早于大西洋奴隶制且与其本质不同。其相对灵活性与大西洋动产奴隶制的严格种族等级制度形成鲜明对比。在欧洲接触非洲的数百年前便将非洲纳入全球贸易网络。'
+  },
+  { g:'3', term:'Three Phases of the Atlantic Slave Trade',
+    who:'Phase I: Portugal, Spain. Phase II: Britain, France, Netherlands. Phase III: abolitionist movements vs. illegal traders',
+    what:'Phase I (15th–16th c.): Early Iberian trade routes. Phase II (17th–18th c.): Massive expansion; plantation slavery drives demand. Phase III (19th c.): Britain bans trade (1807); illegal trade continues.',
+    where:'Atlantic basin — West and Central Africa to the Americas',
+    when:'15th–19th centuries',
+    sig:'Caused massive demographic loss in Africa. Funded early European capitalism. The shift from Phase II to III shows how abolitionism did not immediately end the trade, revealing its deep economic entrenchment.',
+    cwho:'第一阶段：葡萄牙、西班牙。第二阶段：英国、法国、荷兰。第三阶段：废奴运动 vs. 非法贩奴者',
+    cwhat:'第一阶段（15–16世纪）：早期伊比利亚贸易路线。第二阶段（17–18世纪）：大规模扩张，美洲种植园经济驱动需求急增。第三阶段（19世纪）：英国1807年颁布禁令，非法贸易仍在持续。',
+    cwhere:'大西洋盆地——西非、中非至美洲',
+    cwhen:'15至19世纪',
+    csig:'造成非洲大规模人口流失，为早期欧洲资本主义积累原始资本。从第二阶段到第三阶段的转变表明，废奴运动并未立即终结这一贸易，揭示了其深度的经济惯性。'
+  },
+  { g:'3', term:'Lateen Sail',
+    who:'Portuguese navigators, particularly under Prince Henry the Navigator',
+    what:'A triangular sail that allowed ships to sail against the wind by tacking. Solved the problem of Atlantic wind patterns that pushed ships away from the West African coast.',
+    where:'Mediterranean origin; applied along the West African coastline and Atlantic',
+    when:'15th century; key to Portuguese Atlantic expansion',
+    sig:'A critical technological turning point enabling European maritime expansion along Africa\'s coast. Without it, sustained Portuguese contact with West and Central Africa — and the subsequent Atlantic slave trade — would not have been possible.',
+    cwho:'葡萄牙航海家，尤其是航海家亨利王子',
+    cwhat:'一种三角形风帆，通过"之"字形行驶使船只能够逆风航行，解决了大西洋信风将船只推离西非海岸的难题。',
+    cwhere:'起源于地中海；应用于西非沿海及大西洋航线',
+    cwhen:'15世纪；葡萄牙大西洋扩张的关键技术',
+    csig:'使欧洲得以沿非洲海岸进行海上扩张的关键技术转折点。若无此技术，葡萄牙与西非、中非的持续接触以及随后的大西洋奴隶贸易均无从实现。'
+  },
+  { g:'4', term:'Gun-Slave Cycle',
+    who:'European traders, African rulers and warlords, enslaved Africans',
+    what:'A self-reinforcing feedback loop: Europeans traded firearms to African rulers, who used guns to raid neighboring peoples, capturing slaves to trade back to Europeans for more guns.',
+    where:'West and Central Africa, particularly coastal trading regions',
+    when:'16th–19th centuries, during the Atlantic slave trade',
+    sig:'Caused massive population loss, political instability, and militarization. Illustrates how African participation in the slave trade was partly coerced by the logic of the cycle itself.',
+    cwho:'欧洲贸易商、非洲统治者与军阀、被奴役的非洲人',
+    cwhat:'一种自我强化的恶性循环：欧洲人将火器卖给非洲统治者，后者用枪袭击邻近族群，将俘获者卖给欧洲人换取更多枪支。',
+    cwhere:'西非和中非，尤其是沿海贸易地区',
+    cwhen:'16至19世纪，大西洋奴隶贸易期间',
+    csig:'造成非洲大规模人口流失、政治动荡和军事化。揭示了非洲参与奴隶贸易在某种程度上是被这一循环逻辑所裹挟。'
+  },
+  { g:'4', term:'Queen Njinga',
+    who:'Queen Njinga Mbande — ruler of Ndongo and Matamba kingdoms',
+    what:'A powerful African queen who used military resistance and strategic diplomacy to resist Portuguese colonization. Formed alliances with neighboring groups and escaped slaves; temporarily converted to Christianity as political strategy.',
+    where:'West Central Africa — present-day Angola',
+    when:'1620s–1660s CE (17th century)',
+    sig:'Maintained independence for decades despite Portuguese pressure. A symbol of African resistance, female political leadership, and strategic flexibility.',
+    cwho:'恩津加·姆班德女王——恩东戈和马坦巴王国的统治者',
+    cwhat:'一位强大的非洲女王，通过军事抵抗和战略外交抵御葡萄牙殖民。与邻近族群及逃跑的奴隶结盟，并以皈依基督教作为政治策略。',
+    cwhere:'西中非——今安哥拉',
+    cwhen:'17世纪20至60年代',
+    csig:'在葡萄牙的重重压力下维持了数十年的独立。她是非洲抵抗精神、女性政治领导力和战略灵活性的象征。'
+  },
+  { g:'4', term:'Kongo Kingdom',
+    who:'ManiKongo (ruler), notably King Alfonso I (Nzinga Mbemba, r. 1509–1542); Jaga mercenary groups',
+    what:'A centralized monarchy in West Central Africa with ~500,000 people, fertile agriculture, copper metallurgy. Had diplomatic relations with Portugal; adopted Christianity. Became enmeshed in the Atlantic slave trade, triggering the gun-slave cycle.',
+    where:'West Central Africa — present-day Angola, DRC, Republic of Congo; capital Mbanza Kongo',
+    when:'Founded c. 14th century; independent 1390–1862',
+    sig:'Major early example of African-European political and religious interaction. Shows how the Atlantic slave trade weakened African kingdoms through demographic loss, military pressure, and economic competition.',
+    cwho:'马尼刚果（统治者），尤其是阿方索一世（恩津加·姆班巴，在位1509–1542年）；贾加雇佣军群体',
+    cwhat:'西中非的中央集权君主制国家，人口约50万，农业发达，有铜矿冶金。与葡萄牙建立外交关系并皈依基督教。后深陷大西洋奴隶贸易，触发枪奴循环。',
+    cwhere:'西中非——今安哥拉、刚果民主共和国、刚果共和国；首都姆班扎刚果',
+    cwhen:'约14世纪建国；1390–1862年独立',
+    csig:'非洲与欧洲政治和宗教互动的早期重要案例。展示了大西洋奴隶贸易如何通过人口流失、军事压力和经济竞争削弱非洲王国。'
+  },
+  { g:'5', term:'Algeria 1830–1879',
+    who:'French colonial forces; pied-noir settlers; indigenous Algerian (Arab and Berber) populations',
+    what:'French conquest and settler colonization of Algeria (an Ottoman province). France invaded in 1830, encouraged settler occupation of confiscated land, imposed French civil law over Islamic law, created a racial hierarchy. Indigenous resistance lasted 49 years.',
+    where:'North Africa — Algeria',
+    when:'1830–1879 (pacification); 1830–1962 (full colonial period)',
+    sig:'Major early case of settler colonialism in Africa. Created entrenched racial and economic inequalities. The long resistance (49 years) foreshadowed the Algerian War of Independence (1954–1962).',
+    cwho:'法国殖民军队；黑脚（pied-noir）定居者；阿尔及利亚土著（阿拉伯人和柏柏尔人）',
+    cwhat:'法国对阿尔及利亚（奥斯曼帝国省份）的征服与定居者殖民。1830年法国入侵，鼓励定居者占领没收的土地，以法国民法取代伊斯兰法律，建立种族等级制度。土著抵抗持续49年。',
+    cwhere:'北非——阿尔及利亚',
+    cwhen:'1830–1879年（平定）；1830–1962年（完整殖民时期）',
+    csig:'非洲早期定居者殖民主义的重要案例。造成根深蒂固的种族和经济不平等。长达49年的抵抗预示了阿尔及利亚独立战争（1954–1962年）。'
+  },
+  { g:'5', term:'Anglo-Egyptian Condominium',
+    who:'British imperial government; Egyptian government (nominal co-ruler); Sudanese population',
+    what:'Nominally joint British-Egyptian administration of Sudan after the Battle of Omdurman (1898). In practice, Britain held real power. Policies included economic extraction and the "Southern Policy" separating northern and southern Sudan.',
+    where:'Sudan — Northeast Africa',
+    when:'1899–1956',
+    sig:'Illustrates how European empires used legal fictions (nominal co-rule) to mask domination. Created structural inequalities between northern and southern Sudan contributing to later civil wars.',
+    cwho:'英国殖民政府；埃及政府（名义上的共同统治者）；苏丹人民',
+    cwhat:'奥姆杜尔曼战役（1898年）后建立的名义英埃联合苏丹管辖体制。实际上英国掌握真正的权力，政策包括经济掠夺和将苏丹南北分隔的"南方政策"。',
+    cwhere:'苏丹——东北非',
+    cwhen:'1899–1956年',
+    csig:'揭示了欧洲帝国如何利用法律虚构（名义上的共同统治）掩盖单边支配。在苏丹南北之间制造结构性不平等，为后来的内战埋下根源。'
+  },
+  { g:'5', term:'1898 Battle of Omdurman',
+    who:'British-Egyptian army (~25,000) under General Kitchener vs. Mahdist forces (~50,000)',
+    what:'Decisive battle on September 2, 1898. British-Egyptian forces with Maxim guns and modern artillery defeated the Mahdist army. Mahdist casualties ~10,000+; Anglo-Egyptian losses under 500.',
+    where:'Omdurman, Sudan (near Khartoum)',
+    when:'September 2, 1898',
+    sig:'Ended African self-governance in Sudan. Exemplifies Crowder\'s argument about technological imbalance in colonial conquest: Maxim guns vs. spears made open resistance futile.',
+    cwho:'基钦纳将军率领的英埃联军（约25,000人）vs. 马赫迪军队（约50,000人）',
+    cwhat:'1898年9月2日的决定性战役。装备马克沁机枪和现代火炮的英埃联军击败马赫迪军队。马赫迪方伤亡逾万，英埃方不足500人。',
+    cwhere:'苏丹奥姆杜尔曼（喀土穆附近）',
+    cwhen:'1898年9月2日',
+    csig:'终结了苏丹的非洲自治。印证了克劳德关于殖民征服中技术失衡的论点：马克沁机枪对长矛，使公开抵抗几乎毫无胜算。确立了英国对尼罗河流域的控制。'
+  },
+  { g:'6', term:'Menelik II',
+    who:'Menelik II (born Sahle Maryam) — Emperor of Ethiopia',
+    what:'Emperor of Ethiopia (1889–1913) who modernized the state, established Addis Ababa as capital, expanded territory southward, and purchased modern arms from European powers. Led Ethiopia to victory at the Battle of Adwa (1896).',
+    where:'Ethiopia — Horn of Africa; capital Addis Ababa',
+    when:'1889–1913',
+    sig:'Preserved Ethiopian independence — the only African state to successfully defeat a European colonial power in direct military confrontation during the Scramble for Africa.',
+    cwho:'孟尼利克二世（原名萨勒·马里亚姆）——埃塞俄比亚皇帝',
+    cwhat:'埃塞俄比亚皇帝（1889–1913年），推动国家现代化，以亚的斯亚贝巴为首都，向南扩大领土，从欧洲列强购置现代武器。率领埃塞俄比亚在阿杜瓦战役（1896年）中取得胜利。',
+    cwhere:'埃塞俄比亚——非洲之角；首都亚的斯亚贝巴',
+    cwhen:'1889–1913年',
+    csig:'维护了埃塞俄比亚的独立——在瓜分非洲浪潮中，唯一一个在正面军事对抗中成功击败欧洲殖民强国的非洲国家，成为非洲主权的国际象征。'
+  },
+  { g:'6', term:'Treaty of Wechale 1889',
+    who:'Menelik II (Ethiopia) and Italian government',
+    what:'A treaty between Ethiopia and Italy. The Italian version (Article 17) made Ethiopia a protectorate; the Amharic version made this optional. Menelik renounced the treaty in 1893 after discovering the deception, leading to Italian military invasion.',
+    where:'Ethiopia / Tigray region',
+    when:'1889 (signed); 1893 (renounced by Menelik)',
+    sig:'Key example of European deceptive treaty-making as a tool of colonization. Menelik\'s refusal demonstrates "strategic borrowing" — engaging European legal frameworks to resist them. Directly caused the Battle of Adwa.',
+    cwho:'孟尼利克二世（埃塞俄比亚）与意大利政府',
+    cwhat:'埃塞俄比亚与意大利签订的条约。意大利文版（第17条）将埃塞俄比亚列为保护国；阿姆哈拉文版则将此规定列为可选项。孟尼利克二世发现欺骗后于1893年废除该条约，导致意大利军事入侵。',
+    cwhere:'埃塞俄比亚/提格雷地区',
+    cwhen:'1889年（签署）；1893年（废除）',
+    csig:'欧洲以欺骗性条约为殖民工具的典型案例。孟尼利克的拒绝体现了"策略性借用"——借助欧洲法律框架来反抗欧洲殖民，直接导致了阿杜瓦战役的爆发。'
+  },
+  { g:'6', term:'Battle of Adwa 1896',
+    who:'Ethiopian forces under Menelik II (~100,000) vs. Italian army',
+    what:'On March 1, 1896, Ethiopian forces decisively defeated the Italian army at Adwa. Advantages: terrain knowledge, modern weapons, unified command. Led to the Treaty of Addis Ababa, formally ending Italian claims.',
+    where:'Adwa, northern Ethiopia (near Eritrea)',
+    when:'March 1, 1896',
+    sig:'The only decisive military defeat of a European colonial power by an African state during the Scramble for Africa. Ethiopia remained uncolonized. Became a global symbol of African resistance, inspiring Pan-African movements.',
+    cwho:'孟尼利克二世率领的埃塞俄比亚军队（约10万人）vs. 意大利军队',
+    cwhat:'1896年3月1日，埃塞俄比亚军队在阿杜瓦决定性地击败意大利军队。优势：熟悉山地地形、装备现代武器、统一指挥。随后签订《亚的斯亚贝巴条约》，正式终结意大利的领土主张。',
+    cwhere:'埃塞俄比亚北部阿杜瓦（厄立特里亚附近）',
+    cwhen:'1896年3月1日',
+    csig:'瓜分非洲浪潮中，非洲国家在正面军事对抗中击败欧洲殖民强国的唯一案例。埃塞俄比亚得以保持未被殖民的地位，成为非洲抵抗精神的全球象征，后来激励了泛非主义运动。'
+  },
+  { g:'7', term:'Sokoto Caliphate',
+    who:'Usman dan Fodio (founder), Muhammad Bello (successor); Fulani and Hausa Muslim communities',
+    what:'A large Islamic theocratic state established through jihad in the Hausa lands. Dan Fodio\'s movement began as religious reform (critiquing unfair taxation and corrupt rulers), became armed conflict in 1804, and created a confederate emirate system. Nana Asma\'u promoted women\'s education through poetry.',
+    where:'Hausa lands — present-day northern Nigeria and Niger; capital Sokoto',
+    when:'1804–1903 (conquered by British colonial forces)',
+    sig:'The largest and most centralized Islamic state in 19th-century West Africa. Its confederate emirate model provided a formidable counter to British and French colonial expansion.',
+    cwho:'乌斯曼·丹·福迪奥（创始人）、穆罕默德·贝洛（继任者）；富拉尼和豪萨穆斯林社群',
+    cwhat:'通过圣战在豪萨地区建立的伊斯兰神权国家。丹·福迪奥的运动起初是宗教改革（批判不公平税收和腐败统治者），1804年转为武装冲突，建立了联邦酋长国体制。纳纳·阿斯马乌通过诗歌推动女性教育。',
+    cwhere:'豪萨地区——今尼日利亚北部和尼日尔；首都索科托',
+    cwhen:'1804–1903年（被英国殖民军队征服）',
+    csig:'19世纪西非最大、最中央集权的伊斯兰国家。其联邦酋长国体制为抵抗英法殖民扩张提供了强大屏障，也展示了宗教改革运动如何重塑萨赫勒地区的政治体系。'
+  },
+  { g:'7', term:'19th-Century Yoruba Wars',
+    who:'Yoruba city-states (Oyo, Ibadan, Ijebu, Ekiti, Egba); Sokoto Caliphate (Ilorin); British colonial forces',
+    what:'A series of intra-Yoruba wars triggered by the collapse of the Oyo Empire. The fall of Oyo (partly caused by the Sokoto jihad absorbing Ilorin) fragmented Yoruba into competing factions, generating large numbers of enslaved people.',
+    where:'Yorubaland — present-day southwestern Nigeria',
+    when:'c. 1820s–1893',
+    sig:'Illustrates how internal African political crises interacted with external colonial pressures. British mediation (1886, 1893) served as a pathway for colonial penetration into Yorubaland.',
+    cwho:'约鲁巴各城邦（奥约、伊巴丹、伊杰布、埃基蒂、埃格巴）；索科托哈里发国（伊洛林）；英国殖民军队',
+    cwhat:'由奥约帝国崩溃引发的约鲁巴内战系列。奥约的衰落（部分由索科托圣战吞并伊洛林所致）使约鲁巴人分裂为相互竞争的派系，产生了大量被奴役者。',
+    cwhere:'约鲁巴地区——今尼日利亚西南部',
+    cwhen:'约19世纪20年代至1893年',
+    csig:'揭示了非洲内部政治危机与外部殖民压力的相互作用。英国的调停（1886、1893年）成为殖民势力渗透约鲁巴地区的通道。'
+  },
+  { g:'7', term:'1807 Ban',
+    who:'British Parliament; Royal Navy West Africa Squadron; African coastal rulers; abolitionists',
+    what:'Britain\'s 1807 Slave Trade Act banning British participation in the Atlantic slave trade. The Royal Navy deployed the West Africa Squadron to intercept illegal ships. Pushed trade toward "Legitimate Commerce" — palm oil, ivory, peanuts, cotton.',
+    where:'Britain; West African coast; Atlantic Ocean',
+    when:'1807 (ban enacted); enforcement through mid-19th century',
+    sig:'Marked a turning point from enslaved people to commodity goods. Created new economic relationships ultimately facilitating colonial expansion. Did not immediately stop the trade.',
+    cwho:'英国议会；皇家海军西非舰队；非洲沿海统治者；废奴主义者',
+    cwhat:'英国1807年《奴隶贸易法》，禁止英国参与大西洋奴隶贸易。皇家海军派驻西非舰队拦截非法船只。此后贸易转向"合法商业"——棕榈油、象牙、花生、棉花。',
+    cwhere:'英国；西非沿海；大西洋',
+    cwhen:'1807年（颁布禁令）；19世纪中期前持续执法',
+    csig:'标志着贸易从奴役人口转向商品货物的转折点。建立了新的英非经济关系，最终为殖民扩张创造了条件。禁令并未立即终结这一贸易。'
+  },
+  { g:'7', term:'Reverse Diasporas',
+    who:'Formerly enslaved Africans and descendants — Sierra Leonean Krio, Americo-Liberians, Brazilian returnees (Agudas)',
+    what:'The return migration of formerly enslaved Africans or their descendants back to Africa. Key communities: Freetown (Sierra Leone) — liberated Africans resettled by Britain; Monrovia (Liberia) — freed American slaves; Lagos (Nigeria) — Brazilian and Sierra Leonean returnees.',
+    where:'Freetown (Sierra Leone), Monrovia (Liberia), Lagos (Nigeria)',
+    when:'Early 19th century onwards',
+    sig:'These communities became important intermediaries between European colonizers and African societies. Samuel Ajayi Crowther is a key example. Complicated notions of African identity and belonging.',
+    cwho:'曾被奴役的非洲人及其后代——塞拉利昂克里奥尔人、美利坚-利比里亚人、巴西回归者（阿古达斯）',
+    cwhat:'曾被奴役的非洲人或其后代返回非洲大陆的移民运动。主要社群：弗里敦（塞拉利昂）——英国重新安置的获释非洲人；蒙罗维亚（利比里亚）——美国获释奴隶；拉各斯（尼日利亚）——巴西和塞拉利昂回归者。',
+    cwhere:'弗里敦（塞拉利昂）、蒙罗维亚（利比里亚）、拉各斯（尼日利亚）',
+    cwhen:'19世纪初起',
+    csig:'这些社群成为欧洲殖民者与非洲社会之间重要的中间人——担任贸易商、传教士和翻译。塞缪尔·阿贾伊·克劳瑟是典型代表，同时也使非洲身份认同与归属感问题更加复杂。'
+  },
+  { g:'8', term:'Berlin Conference',
+    who:'14 European powers and the United States; Ottoman Empire; King Leopold II of Belgium. No African representatives.',
+    what:'A diplomatic conference to regulate European competition over Africa. Resolved conflict over the Congo River basin. Declared spheres of influence and awarded the Congo to Leopold II personally.',
+    where:'Berlin, Germany',
+    when:'November 1884 – February 1885',
+    sig:'Formalized the Scramble for Africa. Africa was divided without African participation or consent. Established the Congo Free State under Leopold II, notorious for extreme violence.',
+    cwho:'14个欧洲国家与美国；奥斯曼帝国；比利时国王利奥波德二世。无任何非洲代表。',
+    cwhat:'规范欧洲在非洲竞争的外交会议。解决了葡萄牙与比利时就刚果河流域的争端，划定势力范围，并将刚果私人授予利奥波德二世。',
+    cwhere:'德国柏林',
+    cwhen:'1884年11月至1885年2月',
+    csig:'正式确立了瓜分非洲的格局。非洲在未获任何参与和同意的情况下被瓜分。建立了利奥波德二世统治下的刚果自由邦，以极端暴力而臭名昭著。'
+  },
+  { g:'8', term:'General Ologbosere',
+    who:'General Ologbosere — military commander of the Benin Kingdom, brother-in-law of the Oba',
+    what:'Organized the ambush of Lieutenant Phillips\'s British column in 1896 (killing 8 officers), triggering the British punitive expedition. Led a two-year guerrilla campaign after Benin\'s fall until his capture and execution in 1899.',
+    where:'Benin Kingdom — present-day Nigeria',
+    when:'1896–1899',
+    sig:'Exemplifies African military resistance continuing after formal colonial conquest. The British response (massacring supportive villages, destroying crops) reveals the extreme violence used to suppress resistance.',
+    cwho:'奥洛博舍雷将军——贝宁王国军事统帅，奥巴（国王）的姻亲',
+    cwhat:'1896年组织伏击菲利普斯中尉率领的英国队伍（击毙8名军官），引发英国惩罚性远征。贝宁陷落后领导长达两年的游击战，直至1899年被捕处决。',
+    cwhere:'贝宁王国——今尼日利亚',
+    cwhen:'1896–1899年',
+    csig:'体现了非洲军事抵抗在正式殖民征服后仍持续不断的特点。英国的反应（屠杀支持性村庄、毁坏庄稼）揭示了镇压抵抗所使用的极端暴力。'
+  },
+  { g:'8', term:'Pacification of Benin',
+    who:'British forces (Colonel Ralph Moore, ~1,000 troops) vs. Benin Kingdom (Oba, General Ologbosere)',
+    what:'Britain\'s 1897 military campaign to subjugate the Benin Kingdom. After the 1896 "Benin Massacre," British forces burned Benin City, looted its famous bronze and ivory art, exiled the Oba, and incorporated Benin into British Nigeria.',
+    where:'Benin Kingdom — forest belt of present-day Nigeria',
+    when:'1897 (punitive expedition); resistance until 1899',
+    sig:'A defining example of colonial "pacification" — peace rhetoric covering extreme violence. The looted Benin Bronzes remain a major case in debates about colonial cultural theft and repatriation.',
+    cwho:'英国军队（拉尔夫·摩尔上校，约1000名士兵）vs. 贝宁王国（奥巴、奥洛博舍雷将军）',
+    cwhat:'1897年英国征服贝宁王国的军事行动。以1896年"贝宁屠杀"为借口，英军焚毁贝宁城，掠夺著名的青铜器和象牙艺术品，流放奥巴，将贝宁并入英属尼日利亚。',
+    cwhere:'贝宁王国——今尼日利亚森林带',
+    cwhen:'1897年（惩罚性远征）；抵抗持续至1899年',
+    csig:'殖民"平定"的典型案例——以和平话语掩盖极端暴力。被掠夺的贝宁青铜器至今仍是关于殖民文化掠夺与文物归还争论的核心案例。'
+  },
+  { g:'9', term:'Civilizing Mission',
+    who:'European missionaries (London Missionary Society, Church Missionary Society), abolitionists (Thomas Fowell Buxton), capitalists, and African intermediaries (e.g., Samuel Ajayi Crowther)',
+    what:'A 19th-century European ideological framework claiming a moral duty to bring "civilization," Christianity, Western education, and "legitimate commerce" to Africa. Missionaries and capitalists worked synergistically to reshape African societies.',
+    where:'Sub-Saharan Africa; key centers — Freetown (Sierra Leone), Lagos, Niger River mission stations',
+    when:'Primarily 19th century; intensified after 1807 ban and Berlin Conference (1884–85)',
+    sig:'Provided the moral and intellectual justification for European imperialism. Masked resource extraction and colonial conquest behind humanitarian rhetoric. A key ideological foundation for the Scramble for Africa.',
+    cwho:'欧洲传教士（伦敦传教士协会、教会传教士协会）、废奴主义者（托马斯·福韦尔·巴克斯顿）、资本家及非洲中间人（如塞缪尔·阿贾伊·克劳瑟）',
+    cwhat:'一种19世纪欧洲意识形态框架，宣称有道义责任向非洲输出"文明"、基督教、西式教育和"合法商业"。传教士与资本家协同作用，共同重塑非洲社会。',
+    cwhere:'撒哈拉以南非洲；重要中心——弗里敦（塞拉利昂）、拉各斯、尼日尔河沿岸传教站',
+    cwhen:'主要在19世纪；1807年禁令后和柏林会议（1884–85年）后进一步强化',
+    csig:'为欧洲帝国主义提供道义和思想上的合法性依据，以人道主义话语掩盖资源掠夺和殖民征服。是瓜分非洲的核心意识形态基础。'
+  },
+  { g:'9', term:'Samuel Ajayi Crowther',
+    who:'Yoruba scholar, linguist, missionary — the first African Anglican bishop',
+    what:'Born c. 1809 in southwestern Nigeria, enslaved as a child, rescued by the British Navy, taken to Sierra Leone. Educated by missionaries; converted to Christianity. Translated the Bible into Yoruba and established missions along the Niger River. Consecrated bishop in 1864.',
+    where:'Born: southwestern Nigeria; educated: Freetown, Sierra Leone; missionary work: Niger River, West Africa',
+    when:'c. 1809–1891',
+    sig:'Crowther\'s life encapsulates the intersection of the slave trade, abolition, reverse diaspora, Civilizing Mission, and African agency. He challenged European racial superiority from within missionary institutions — a form of "strategic borrowing."',
+    cwho:'约鲁巴学者、语言学家、传教士——首位非洲裔圣公会主教',
+    cwhat:'约1809年生于今尼日利亚西南部，幼年被奴役，后被英国海军解救送往塞拉利昂。接受传教士教育并皈依基督教。将《圣经》译为约鲁巴语，在尼日尔河沿岸建立传教站。1864年被祝圣为主教。',
+    cwhere:'出生：尼日利亚西南部；受教育：塞拉利昂弗里敦；传教工作：西非尼日尔河流域',
+    cwhen:'约1809–1891年',
+    csig:'克劳瑟的一生浓缩了奴隶贸易、废奴运动、逆向侨民、文明使命与非洲主体性的交汇。他在传教机构内部挑战欧洲种族优越论——这是一种"策略性借用"的体现。'
+  },
+  { g:'9', term:'Company Rule',
+    who:'Private concessionary (charter) companies backed by European governments — e.g., British South Africa Company (Cecil Rhodes), Royal African Company, Congo Free State (Leopold II)',
+    what:'An early form of colonial administration in which private companies governed African territories. Companies obtained charters granting rights to tax, organize labor, issue currencies, and build infrastructure. Highly violent, relying on forced labor and coercive taxation.',
+    where:'Across colonial Africa — southern Africa (Rhodesia), Congo, West Africa',
+    when:'Late 19th to early 20th century; expanding after Berlin Conference (1884–85)',
+    sig:'Laid the groundwork for High Colonialism (direct state administration). Though governance shifted from private firms to the colonial state, the fundamental goal remained: extracting African resources and labor for European benefit.',
+    cwho:'获欧洲政府授权的私人特许（charter）公司——如英国南非公司（塞西尔·罗兹）、皇家非洲公司、刚果自由邦（利奥波德二世）',
+    cwhat:'由私人公司而非殖民国家直接管辖非洲领土的早期殖民行政形式。公司获得特许状，享有征税、组织劳工、发行货币和建设基础设施的权利。高度暴力，依赖强迫劳动和强制征税。',
+    cwhere:'非洲各殖民地——南部非洲（罗得西亚）、刚果、西非',
+    cwhen:'19世纪末至20世纪初；柏林会议（1884–85年）后大规模扩张',
+    csig:'为高度殖民主义（国家直接统治）奠定了基础。尽管治理权从私人公司转移到殖民国家，根本目标始终未变：为欧洲利益攫取非洲资源和劳动力。'
+  },
+  { g:'10', term:'Settler Colonialism',
+    who:'Britain, France, Germany, Portugal, Belgium; European settlers; indigenous African populations',
+    what:'A form of colonialism in which Europeans permanently settled African territories, seizing indigenous land. Colonial costs paid by colonized peoples through taxation and forced labor. Major economies: mining (copper), large-scale agriculture, cash crop production.',
+    where:'South Africa, Rhodesia, Kenya, Algeria, Angola, Mozambique, Namibia, Belgian Congo',
+    when:'Late 19th–20th century',
+    sig:'Structurally more violent than non-settler colonialism because it required permanent dispossession of land. Created long-term racial and economic inequalities that persisted after independence.',
+    cwho:'英国、法国、德国、葡萄牙、比利时；欧洲定居者；非洲土著人口',
+    cwhat:'欧洲人永久定居非洲领土、强占土著土地的殖民形式。殖民成本（基础设施、军事、行政）由被殖民者通过税收和强迫劳动承担。主要经济形式：采矿（铜）、大规模种植园农业、经济作物生产。',
+    cwhere:'南非、罗得西亚、肯尼亚、阿尔及利亚、安哥拉、莫桑比克、纳米比亚、比属刚果',
+    cwhen:'19世纪末至20世纪',
+    csig:'比非定居者殖民主义在结构上更具暴力性，因为它需要对土地进行永久性剥夺。造成的种族和经济不平等延续至独立后，深刻影响了后殖民时代的政治格局。'
+  },
+  { g:'10', term:'Direct Rule / Indirect Rule',
+    who:'Direct Rule: France, Portugal. Indirect Rule: Britain (sometimes Germany). African populations governed under both.',
+    what:'Direct Rule: European officials governed directly, imposing European legal systems and legal categories (Indigenes, Evolues, Originaires). Indirect Rule: Europeans governed through existing African chiefs as intermediaries. Cheaper but made chiefs answerable to Europeans, not their own people.',
+    where:'Direct Rule: Algeria, French West Africa, Portuguese colonies. Indirect Rule: British Nigeria, Gold Coast.',
+    when:'Late 19th–20th century',
+    sig:'Two contrasting models with different long-term consequences. Direct rule imposed European legal hierarchies. Indirect rule "froze" African political systems and created chiefs with compromised legitimacy.',
+    cwho:'直接统治：法国、葡萄牙。间接统治：英国（有时德国）。两种制度下的非洲人民均受其治理。',
+    cwhat:'直接统治：欧洲官员直接管治，强制推行欧洲法律体系，设立法律身份等级（土著人、进化者、原籍民）。间接统治：欧洲人通过现有的非洲酋长作为中间人进行统治，成本更低，但使酋长对欧洲人而非本族人负责。',
+    cwhere:'直接统治：阿尔及利亚、法属西非、葡萄牙殖民地。间接统治：英属尼日利亚、黄金海岸。',
+    cwhen:'19世纪末至20世纪',
+    csig:'两种截然不同的殖民治理模式，产生了不同的长远后果。直接统治强加了欧洲法律等级制度；间接统治将非洲政治体系"冻结"，制造了合法性受损的酋长阶层，成为后殖民时代治理困境的根源之一。'
+  },
+  { g:'10', term:'The Four Communes',
+    who:'African originaires; French colonial administration; Blaise Diagne (first African elected to French National Assembly, 1914)',
+    what:'The four oldest French colonial towns in Senegal — Saint-Louis (1659), Goree, Rufisque (1880), Dakar (1887) — where African inhabitants (originaires) were granted French citizenship rights and could vote and send a representative to the French Parliament.',
+    where:'Senegal — Saint-Louis, Goree, Rufisque, Dakar',
+    when:'Rights granted in waves: 1848, 1872, 1880, 1887; continued until independence (1960)',
+    sig:'A unique exception to French colonial policy. Demonstrates both the promise and limits of French Assimilation. Created an educated African political elite who leveraged French law to resist colonial exploitation, influencing early African nationalism.',
+    cwho:'非洲原籍民（originaires）；法国殖民行政当局；布莱斯·迪亚涅（1914年首位当选法国国民议会议员的非洲人）',
+    cwhat:'塞内加尔四个最古老的法国殖民城镇——圣路易斯（1659年）、戈雷、鲁菲斯克（1880年）、达喀尔（1887年）——当地非洲居民（原籍民）被授予法国公民权利，可投票并向法国议会派遣代表。',
+    cwhere:'塞内加尔——圣路易斯、戈雷、鲁菲斯克、达喀尔',
+    cwhen:'公民权利分批授予：1848、1872、1880、1887年；延续至塞内加尔独立（1960年）',
+    csig:'法国殖民政策中的独特例外。既体现了法国同化政策的承诺，也揭示了其局限性。由此形成的受教育非洲政治精英阶层借助法律框架抵制殖民剥削，对早期非洲民族主义运动产生了深远影响。'
+  }
+];
+
+function renderKeywords(group='all') {
+  const grid = document.getElementById('keywords-grid');
+  const filtered = group === 'all' ? KW : KW.filter(k => k.g === group);
+  grid.innerHTML = filtered.map((k, i) => {
+    const uid = `cn_${k.g}_${i}`;
+    return `<div class="keyword-card" data-group="${k.g}">
+      <div class="kw-group-tag">Group ${k.g}</div>
+      <div class="kw-title">${k.term}</div>
+      <div class="kw-section-label">Who</div><div class="kw-text">${k.who}</div>
+      <div class="kw-section-label">What</div><div class="kw-text">${k.what}</div>
+      <div class="kw-section-label">Where</div><div class="kw-text">${k.where}</div>
+      <div class="kw-section-label">When</div><div class="kw-text">${k.when}</div>
+      <div class="kw-section-label">Significance</div><div class="kw-text">${k.sig}</div>
+      <div class="cn-toggle" onclick="toggleCN('${uid}')">
+        <span class="cn-arrow" id="arr_${uid}">▶</span>
+        <span class="cn-toggle-label">中文翻译</span>
+      </div>
+      <div class="cn-block" id="${uid}">
+        <div class="cn-label">主要人物</div><div class="cn-text">${k.cwho}</div>
+        <div class="cn-label">内容</div><div class="cn-text">${k.cwhat}</div>
+        <div class="cn-label">地点</div><div class="cn-text">${k.cwhere}</div>
+        <div class="cn-label">时间</div><div class="cn-text">${k.cwhen}</div>
+        <div class="cn-label">历史意义</div><div class="cn-text">${k.csig}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCN(uid) {
+  document.getElementById(uid).classList.toggle('open');
+  document.getElementById('arr_' + uid).classList.toggle('open');
+}
+
+function filterGroup(group, btn) {
+  document.querySelectorAll('#panel-keywords .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderKeywords(group);
+}
+
+let cardStates = {}, currentIdx = 0, isFlipped = false, fcMode = 'all';
+KW.forEach((_, i) => { cardStates[i] = 'unseen'; });
+
+function getActiveDeck() {
+  if (fcMode === 'review') return KW.map((_, i) => i).filter(i => cardStates[i] === 'review');
+  if (fcMode === 'unseen') return KW.map((_, i) => i).filter(i => cardStates[i] === 'unseen');
+  return KW.map((_, i) => i);
+}
+
+function renderFC() {
+  const deck = getActiveDeck();
+  if (!deck.length) {
+    document.getElementById('fc-term').textContent = 'No cards in this deck!';
+    document.getElementById('fc-back-content').innerHTML = '<div class="fc-back-title">Empty</div>';
+    document.getElementById('fc-counter').textContent = '0 / 0';
+    document.getElementById('fc-result-btns').style.display = 'none';
+    return;
+  }
+  const k = KW[deck[currentIdx % deck.length]];
+  document.getElementById('fc-term').textContent = k.term;
+  document.getElementById('fc-back-content').innerHTML = `
+    <div class="fc-back-title">${k.term}</div>
+    <div class="fc-back-row"><strong>Who</strong>${k.who}</div>
+    <div class="fc-back-row"><strong>What</strong>${k.what}</div>
+    <div class="fc-back-row"><strong>Where</strong>${k.where}</div>
+    <div class="fc-back-row"><strong>When</strong>${k.when}</div>
+    <div class="fc-back-row"><strong>Significance</strong>${k.sig}</div>
+    <hr class="fc-divider">
+    <div class="fc-cn-row"><strong>主要人物</strong>${k.cwho}</div>
+    <div class="fc-cn-row"><strong>内容</strong>${k.cwhat}</div>
+    <div class="fc-cn-row"><strong>历史意义</strong>${k.csig}</div>`;
+  const pos = (currentIdx % deck.length) + 1;
+  document.getElementById('fc-counter').textContent = `${pos} / ${deck.length}`;
+  document.getElementById('fc-progress').style.width = `${(pos/deck.length)*100}%`;
+  document.getElementById('fc-result-btns').style.display = 'none';
+  updateScore();
+}
+
+function flipCard() {
+  isFlipped = !isFlipped;
+  document.getElementById('fc-card').classList.toggle('flipped', isFlipped);
+  if (isFlipped) document.getElementById('fc-result-btns').style.display = 'flex';
+}
+
+function markCard(status) {
+  const deck = getActiveDeck();
+  if (!deck.length) return;
+  cardStates[deck[currentIdx % deck.length]] = status;
+  updateScore(); fcNav(1);
+}
+
+function fcNav(dir) {
+  const deck = getActiveDeck();
+  if (!deck.length) return;
+  currentIdx = (currentIdx + dir + deck.length) % deck.length;
+  isFlipped = false;
+  document.getElementById('fc-card').classList.remove('flipped');
+  renderFC();
+}
+
+function shuffleDeck() {
+  KW.sort(() => Math.random() - 0.5);
+  currentIdx = 0; isFlipped = false;
+  document.getElementById('fc-card').classList.remove('flipped');
+  renderFC();
+}
+
+function resetDeck() {
+  KW.forEach((_, i) => { cardStates[i] = 'unseen'; });
+  currentIdx = 0; isFlipped = false;
+  document.getElementById('fc-card').classList.remove('flipped');
+  renderFC();
+}
+
+function updateScore() {
+  document.getElementById('score-know').textContent = Object.values(cardStates).filter(s=>s==='know').length + ' know';
+  document.getElementById('score-review').textContent = Object.values(cardStates).filter(s=>s==='review').length + ' review';
+  document.getElementById('score-unseen').textContent = Object.values(cardStates).filter(s=>s==='unseen').length + ' unseen';
+}
+
+function fcFilter(mode, btn) {
+  fcMode = mode;
+  document.querySelectorAll('.fc-filter .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentIdx = 0; isFlipped = false;
+  document.getElementById('fc-card').classList.remove('flipped');
+  renderFC();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+renderKeywords(); renderFC();
+</script>
+</body>
+</html>
